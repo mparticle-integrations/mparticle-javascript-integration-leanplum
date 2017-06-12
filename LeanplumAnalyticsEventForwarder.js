@@ -32,20 +32,36 @@
             isInitialized = false,
             forwarderSettings,
             reportingService,
-            isTesting;
+            isTesting,
+            constants = {
+                customerId: 'customerId',
+                email: 'email'
+            };
 
         self.name = name;
 
         function processEvent(event) {
             var reportEvent = false;
-
             if (isInitialized) {
                 try {
                     if (event.EventDataType === MessageType.PageView) {
                         reportEvent = logPageView(event);
                     }
-                    else if (event.EventDataType === MessageType.Commerce) {
+                    else if (event.EventDataType === MessageType.Commerce && event.EventCategory === mParticle.CommerceEventType.ProductPurchase) {
                         reportEvent = logPurchaseEvent(event);
+                    }
+                    else if (event.EventDataType === MessageType.Commerce) {
+                        var listOfPageEvents = mParticle.eCommerce.expandCommerceEvent(event);
+                        if (listOfPageEvents !== null) {
+                            for (var i = 0; i < listOfPageEvents.length; i++) {
+                                try {
+                                    logEvent(listOfPageEvents[i]);
+                                }
+                                catch (err) {
+                                    return 'Error logging page event' + err.message;
+                                }
+                            }
+                        }
                     }
                     else if (event.EventDataType === MessageType.PageEvent) {
                         reportEvent = logEvent(event);
@@ -54,7 +70,8 @@
                     if (reportEvent === true && reportingService) {
                         reportingService(self, event);
                         return 'Successfully sent to ' + name;
-                    } else {
+                    }
+                    else {
                         return 'Error logging event - ' + reportEvent.error;
                     }
                 }
@@ -67,9 +84,10 @@
         }
 
         function setUserIdentity(id, type) {
+            var leanPlumConfigType = forwarderSettings.userIdField;
             if (isInitialized) {
                 try {
-                    if (type === window.mParticle.IdentityType.CustomerId || type === window.mParticle.IdentityType.Email) {
+                    if ((type === window.mParticle.IdentityType.CustomerId && leanPlumConfigType === constants.customerId) || (type === window.mParticle.IdentityType.Email && leanPlumConfigType === constants.email)) {
                         Leanplum.setUserId(id);
                     }
                     else {
@@ -110,10 +128,10 @@
         function logPageView(data) {
             try {
                 if (data.EventAttributes) {
-                    Leanplum.track('Viewed ' + data.EventName, data.EventAttributes);
+                    Leanplum.advanceTo(data.EventName, data.EventAttributes);
                 }
                 else {
-                    Leanplum.track('Viewed ' + data.EventName);
+                    Leanplum.advanceTo(data.EventName);
                 }
                 return true;
             }
@@ -167,10 +185,11 @@
                     leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
                     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
                     leanplumScript.onload = function() {
-                        completeLeanPlumInitialization(forwarderSettings, userIdentities);
+                        completeLeanPlumInitialization(userAttributes, userIdentities);
                     };
-                } else {
-                    completeLeanPlumInitialization(forwarderSettings, userIdentities);
+                }
+                else {
+                    completeLeanPlumInitialization(userAttributes, userIdentities);
                 }
 
                 return 'Leanplum successfully loaded';
@@ -180,38 +199,45 @@
             }
         }
 
-        function completeLeanPlumInitialization(forwarderSettings, userIdentities) {
-            setLeanPlumEnvironment(forwarderSettings);
-            initializeUserId(userIdentities);
+        function completeLeanPlumInitialization(userAttributes, userIdentities) {
+            setLeanPlumEnvironment();
+            initializeUserId(userAttributes, userIdentities);
             isInitialized = true;
         }
 
-        function setLeanPlumEnvironment(forwarderSettings) {
-            if (window.mParticle.isDebug) {
+        function setLeanPlumEnvironment() {
+            if (window.mParticle.isSandbox) {
                 Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.apiKey);
-            } else {
+            }
+            else {
                 Leanplum.setAppIdForProductionMode(forwarderSettings.appId, forwarderSettings.apiKey);
             }
         }
 
-        function initializeUserId(userIdentities) {
-            var customerIdentity, emailIdentity;
+        function initializeUserId(userAttributes, userIdentities) {
+            var userId = null;
+            if (userIdentities.length) {
+                if (forwarderSettings.userIdField === constants.customerId) {
+                    userId = userIdentities.filter(function(identity) {
+                        return (identity.Type === window.mParticle.IdentityType.CustomerId);
+                    })[0];
+                }
+                else if (forwarderSettings.userIdField === constants.customerId) {
+                    userId = userIdentities.filter(function(identity) {
+                        return (identity.Type === window.mParticle.IdentityType.Email);
+                    })[0];
+                }
 
-            customerIdentity = userIdentities.filter(function(identity) {
-                return (identity.Type === window.mParticle.IdentityType.CustomerId);
-            })[0];
-
-            emailIdentity = userIdentities.filter(function(identity) {
-                return (identity.Type === window.mParticle.IdentityType.Email);
-            })[0];
-
-            if (customerIdentity) {
-                Leanplum.start(customerIdentity.Identity);
-            } else if (emailIdentity) {
-                Leanplum.start(emailIdentity.Identity);
-            } else {
-                Leanplum.start();
+                if (userId && userId.Identity && Object.keys(userAttributes).length) {
+                    Leanplum.start(userId.Identity, userAttributes);
+                }
+                else if (userId && userId.Identity) {
+                    Leanplum.start(userId.Identity);
+                }
+                return;
             }
+
+            Leanplum.start();
         }
 
         this.init = initForwarder;
