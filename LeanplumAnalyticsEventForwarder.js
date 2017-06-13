@@ -208,6 +208,7 @@
                 if (!success) {
                     return 'Failed to initialize: ' + name;
                 }
+                isInitialized = true;
                 if (Leanplum && eventQueue.length > 0) {
                     // Process any events that may have been queued up while forwarder was being initialized.
                     for (var i = 0; i < eventQueue.length; i++) {
@@ -221,7 +222,6 @@
 
             setLeanPlumEnvironment();
             initializeUserId(userAttributes, userIdentities);
-            isInitialized = true;
         }
 
         function setLeanPlumEnvironment() {
