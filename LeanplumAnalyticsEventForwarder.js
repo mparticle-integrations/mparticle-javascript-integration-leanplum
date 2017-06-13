@@ -36,7 +36,8 @@
             constants = {
                 customerId: 'customerId',
                 email: 'email'
-            };
+            },
+            eventQueue = [];
 
         self.name = name;
 
@@ -72,15 +73,18 @@
                         return 'Successfully sent to ' + name;
                     }
                     else {
-                        return 'Error logging event - ' + reportEvent.error;
+                        return 'Error logging event or event type not supported - ' + reportEvent.error;
                     }
                 }
                 catch (e) {
                     return 'Failed to send to: ' + name + ' ' + e;
                 }
             }
+            else {
+                eventQueue.push(event);
+            }
 
-            return 'Can\'t send to forwarder ' + name + ', not initialized';
+            return 'Can\'t send to forwarder ' + name + ', not initialized. Event added to queue.';
         }
 
         function setUserIdentity(id, type) {
@@ -195,11 +199,26 @@
                 return 'Leanplum successfully loaded';
             }
             catch (e) {
-                return ('Failed to initialize: ' + e);
+                return 'Failed to initialize: ' + e;
             }
         }
 
         function completeLeanPlumInitialization(userAttributes, userIdentities) {
+            var successCallback = function(success) {
+                if (!success) {
+                    return 'Failed to initialize: ' + name;
+                }
+                if (Leanplum && eventQueue.length > 0) {
+                    // Process any events that may have been queued up while forwarder was being initialized.
+                    for (var i = 0; i < eventQueue.length; i++) {
+                        processEvent(eventQueue[i]);
+                    }
+
+                    eventQueue = [];
+                }
+            };
+            Leanplum.addStartResponseHandler(successCallback);
+
             setLeanPlumEnvironment();
             initializeUserId(userAttributes, userIdentities);
             isInitialized = true;
