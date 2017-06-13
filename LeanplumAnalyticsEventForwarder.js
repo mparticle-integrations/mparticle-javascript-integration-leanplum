@@ -189,11 +189,27 @@
                     leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
                     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
                     leanplumScript.onload = function() {
+                        var successCallback = function(success) {
+                            if (!success) {
+                                return 'Failed to initialize: ' + name;
+                            }
+                            isInitialized = true;
+                            if (Leanplum && eventQueue.length > 0) {
+                                // Process any events that may have been queued up while forwarder was being initialized.
+                                for (var i = 0; i < eventQueue.length; i++) {
+                                    processEvent(eventQueue[i]);
+                                }
+
+                                eventQueue = [];
+                            }
+                        };
+                        Leanplum.addStartResponseHandler(successCallback);
                         completeLeanPlumInitialization(userAttributes, userIdentities);
                     };
                 }
                 else {
                     completeLeanPlumInitialization(userAttributes, userIdentities);
+                    isInitialized = true;
                 }
 
                 return 'Leanplum successfully loaded';
@@ -204,22 +220,6 @@
         }
 
         function completeLeanPlumInitialization(userAttributes, userIdentities) {
-            var successCallback = function(success) {
-                if (!success) {
-                    return 'Failed to initialize: ' + name;
-                }
-                isInitialized = true;
-                if (Leanplum && eventQueue.length > 0) {
-                    // Process any events that may have been queued up while forwarder was being initialized.
-                    for (var i = 0; i < eventQueue.length; i++) {
-                        processEvent(eventQueue[i]);
-                    }
-
-                    eventQueue = [];
-                }
-            };
-            Leanplum.addStartResponseHandler(successCallback);
-
             setLeanPlumEnvironment();
             initializeUserId(userAttributes, userIdentities);
         }
