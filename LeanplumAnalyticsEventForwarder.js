@@ -16,7 +16,7 @@
 //  limitations under the License.
 
 (function (window) {
-    var name = 'LeanplumAnalyticsEventForwarder',
+    var name = 'Leanplum',
         MessageType = {
             SessionStart: 1,
             SessionEnd: 2,
@@ -226,10 +226,10 @@
 
         function setLeanPlumEnvironment() {
             if (window.mParticle.isSandbox) {
-                Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.apiKey);
+                Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
             }
             else {
-                Leanplum.setAppIdForProductionMode(forwarderSettings.appId, forwarderSettings.apiKey);
+                Leanplum.setAppIdForProductionMode(forwarderSettings.appId, forwarderSettings.clientKey);
             }
         }
 
