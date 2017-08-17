@@ -241,7 +241,7 @@
                         return (identity.Type === window.mParticle.IdentityType.CustomerId);
                     })[0];
                 }
-                else if (forwarderSettings.userIdField === constants.customerId) {
+                else if (forwarderSettings.userIdField === constants.email) {
                     userId = userIdentities.filter(function(identity) {
                         return (identity.Type === window.mParticle.IdentityType.Email);
                     })[0];
