@@ -35,6 +35,7 @@
             isTesting,
             constants = {
                 customerId: 'customerId',
+                mpid: 'mpid',
                 email: 'email'
             },
             eventQueue = [];
@@ -104,6 +105,16 @@
             }
             else {
                 return 'Can\'t call setUserIdentity on forwarder ' + name + ', not initialized';
+            }
+        }
+        function onUserIdentified(user) {
+            if (isInitialized) {
+                if (forwarderSettings.userIdField === constants.mpid) {
+                    Leanplum.setUserId(user.getMPID());
+                }
+            }
+            else {
+                return 'Can\'t call onUserIdentified on forwarder ' + name + ', not initialized';
             }
         }
 
@@ -234,7 +245,21 @@
         }
 
         function initializeUserId(userAttributes, userIdentities) {
-            var userId = null;
+            var user,
+                userId = null;
+
+            // if Identity object exists on mParticle, it is on V2 of SDK and we prioritize MPID
+            if (window.mParticle && window.mParticle.Identity) {
+                if (forwarderSettings.userIdField === constants.mpid) {
+                    user = window.mParticle.getCurrentUser();
+                    if (user) {
+                        userId = user.getMPID();
+                        Leanplum.start(userId);
+                        return;
+                    }
+                }
+            }
+
             if (userIdentities.length) {
                 if (forwarderSettings.userIdField === constants.customerId) {
                     userId = userIdentities.filter(function(identity) {
@@ -264,6 +289,7 @@
         this.setUserIdentity = setUserIdentity;
         this.setUserAttribute = setUserAttribute;
         this.removeUserAttribute = removeUserAttribute;
+        this.onUserIdentified = onUserIdentified;
     };
 
     if (!window || !window.mParticle || !window.mParticle.addForwarder) {

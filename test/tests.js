@@ -197,7 +197,7 @@ describe('Leanplum Forwarder', function () {
     beforeEach(function() {
         window.Leanplum = new MockLeanplum();
         mParticle.forwarder.init({
-            apiKey: '123456',
+            clientKey: '123456',
             appId: 'abcde',
             userIdField: 'customerId'
         }, reportService.cb, true, null, {
@@ -326,7 +326,7 @@ describe('Leanplum Forwarder', function () {
     it('should set user identity when userIdentities are passed on init and userIdField = email', function(done) {
         window.Leanplum = new MockLeanplum();
         mParticle.forwarder.init({
-            apiKey: '123456',
+            clientKey: '123456',
             appId: 'abcde',
             userIdField: 'email'
         }, reportService.cb, true, null, {
@@ -342,9 +342,32 @@ describe('Leanplum Forwarder', function () {
             Type: IdentityType.Facebook
         }], '1.1', 'My App');
 
-        mParticle.forwarder.setUserIdentity('123abc', IdentityType.Email);
+        window.Leanplum.userId.should.equal('email');
 
-        window.Leanplum.userId.should.equal('123abc');
+        done();
+    });
+
+    it('should set user identity as MPID when userIdentities are passed on init and userIdField = mpid', function(done) {
+        window.Leanplum = new MockLeanplum();
+        window.mParticle.Identity = {};
+        mParticle.forwarder.init({
+            clientKey: '123456',
+            appId: 'abcde',
+            userIdField: 'mpid'
+        }, reportService.cb, true, null, {
+            gender: 'm'
+        }, [{
+            Identity: 'customerId',
+            Type: IdentityType.CustomerId
+        }, {
+            Identity: 'email',
+            Type: IdentityType.Email
+        }, {
+            Identity: 'facebook',
+            Type: IdentityType.Facebook
+        }], '1.1', 'My App');
+
+        window.Leanplum.userId.should.equal(123);
 
         done();
     });
