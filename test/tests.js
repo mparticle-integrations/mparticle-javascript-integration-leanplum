@@ -405,7 +405,7 @@ describe('Leanplum Forwarder', function () {
     it('should remove user attributes', function(done) {
         window.Leanplum.userAttributes.gender.should.equal('m');
 
-        mParticle.forwarder.removeUserAttribute(null, 'gender');
+        mParticle.forwarder.removeUserAttribute('gender');
 
         Object.keys(window.Leanplum.userAttributes).length.should.equal(0);
 

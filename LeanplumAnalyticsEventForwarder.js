@@ -136,7 +136,7 @@
             }
         }
 
-        function removeUserAttribute(forwarder, key) {
+        function removeUserAttribute(key) {
             setUserAttribute(key, null);
         }
 
