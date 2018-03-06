@@ -1,0 +1,7 @@
+var shell = require('shelljs');
+var util = require('util');
+var defaultArgs = '--single-run --browsers=ChromeHeadless';
+var args = process.argv.slice(2).join(' ') || defaultArgs;
+var testCommand = util.format('browserify test/test-index.js -o test/test-bundle.js --debug && karma start %s test/karma.config.js', args);
+console.log('Running command: \n' + testCommand);
+shell.exec(testCommand);
