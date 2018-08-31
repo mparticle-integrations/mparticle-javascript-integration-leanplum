@@ -417,4 +417,33 @@ describe('Leanplum Forwarder', function () {
 
         done();
     });
+
+    it('should set userId as MPID on onUserIdentified if forwarder settings has MPID as userIdField', function(done) {
+        var mParticleUser = {
+            getMPID: function() {return 'abc';}
+        };
+        mParticle.forwarder.init({
+            clientKey: '123456',
+            appId: 'abcde',
+            userIdField: 'mpid'
+        }, reportService.cb, true, null, {
+            gender: 'm'
+        }, [{
+            Identity: 'customerId',
+            Type: IdentityType.CustomerId
+        }, {
+            Identity: 'email',
+            Type: IdentityType.Email
+        }, {
+            Identity: 'facebook',
+            Type: IdentityType.Facebook
+        }], '1.1', 'My App');
+
+        mParticle.forwarder.onUserIdentified(mParticleUser);
+
+        window.Leanplum.userId.should.equal('abc');
+
+
+        done();
+    });
 });
