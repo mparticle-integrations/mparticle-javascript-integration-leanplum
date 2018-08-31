@@ -349,7 +349,13 @@ describe('Leanplum Forwarder', function () {
 
     it('should set user identity as MPID when userIdentities are passed on init and userIdField = mpid', function(done) {
         window.Leanplum = new MockLeanplum();
-        window.mParticle.Identity = {};
+        window.mParticle.Identity = {
+            getCurrentUser: function() {
+                return {
+                    getMPID: function() {
+                        return '123';
+                    }};
+            }};
         mParticle.forwarder.init({
             clientKey: '123456',
             appId: 'abcde',
@@ -367,7 +373,7 @@ describe('Leanplum Forwarder', function () {
             Type: IdentityType.Facebook
         }], '1.1', 'My App');
 
-        window.Leanplum.userId.should.equal(123);
+        window.Leanplum.userId.should.equal('123');
 
         done();
     });
