@@ -198,7 +198,6 @@
                     leanplumScript.type = 'text/javascript';
                     leanplumScript.async = true;
                     leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
                     leanplumScript.onload = function() {
                         var successCallback = function(success) {
                             if (!success) {
@@ -217,6 +216,7 @@
                         Leanplum.addStartResponseHandler(successCallback);
                         completeLeanPlumInitialization(userAttributes, userIdentities);
                     };
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
                 }
                 else {
                     completeLeanPlumInitialization(userAttributes, userIdentities);
