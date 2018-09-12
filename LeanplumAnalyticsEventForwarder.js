@@ -198,23 +198,19 @@
                     leanplumScript.type = 'text/javascript';
                     leanplumScript.async = true;
                     leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
-                    leanplumScript.onload = function() {
-                        var successCallback = function(success) {
-                            if (!success) {
-                                return 'Failed to initialize: ' + name;
-                            }
-                            isInitialized = true;
-                            if (Leanplum && eventQueue.length > 0) {
-                                // Process any events that may have been queued up while forwarder was being initialized.
-                                for (var i = 0; i < eventQueue.length; i++) {
-                                    processEvent(eventQueue[i]);
-                                }
 
-                                eventQueue = [];
-                            }
-                        };
-                        Leanplum.addStartResponseHandler(successCallback);
+                    leanplumScript.onload = function() {
+                        // Leanplum.addStartResponseHandler(successCallback);
                         completeLeanPlumInitialization(userAttributes, userIdentities);
+                        isInitialized = true;
+                        if (Leanplum && eventQueue.length > 0) {
+                            // Process any events that may have been queued up while forwarder was being initialized.
+                            for (var i = 0; i < eventQueue.length; i++) {
+                                processEvent(eventQueue[i]);
+                            }
+
+                            eventQueue = [];
+                        }
                     };
                     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
                 }
