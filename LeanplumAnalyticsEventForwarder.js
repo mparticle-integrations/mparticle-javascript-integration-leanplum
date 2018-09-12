@@ -200,7 +200,6 @@
                     leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
 
                     leanplumScript.onload = function() {
-                        // Leanplum.addStartResponseHandler(successCallback);
                         completeLeanPlumInitialization(userAttributes, userIdentities);
                         isInitialized = true;
                         if (Leanplum && eventQueue.length > 0) {
