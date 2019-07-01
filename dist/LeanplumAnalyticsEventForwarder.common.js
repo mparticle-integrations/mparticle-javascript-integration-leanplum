@@ -1,3 +1,16 @@
+Object.defineProperty(exports, '__esModule', { value: true });
+
+/*!
+ * isobject <https://github.com/jonschlinkert/isobject>
+ *
+ * Copyright (c) 2014-2017, Jon Schlinkert.
+ * Released under the MIT License.
+ */
+
+function isObject(val) {
+  return val != null && typeof val === 'object' && Array.isArray(val) === false;
+}
+
 /* eslint-disable no-undef */
 
 //
@@ -15,7 +28,7 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
-    var isobject = require('isobject');
+    
 
     var name = 'Leanplum',
         moduleId = 98,
@@ -299,12 +312,12 @@
             return;
         }
 
-        if (!isobject(config)) {
+        if (!isObject(config)) {
             window.console.log('\'config\' must be an object. You passed in a ' + typeof config);
             return;
         }
 
-        if (isobject(config.kits)) {
+        if (isObject(config.kits)) {
             config.kits[name] = {
                 constructor: constructor
             };
@@ -325,6 +338,10 @@
         });
     }
 
-    module.exports = {
+    var LeanplumAnalyticsEventForwarder = {
         register: register
     };
+var LeanplumAnalyticsEventForwarder_1 = LeanplumAnalyticsEventForwarder.register;
+
+exports.default = LeanplumAnalyticsEventForwarder;
+exports.register = LeanplumAnalyticsEventForwarder_1;
