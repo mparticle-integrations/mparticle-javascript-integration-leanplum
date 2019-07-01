@@ -21,7 +21,7 @@ export default [
     {
         input: 'src/LeanplumAnalyticsEventForwarder.js',
         output: {
-            file: 'dist/LeanplumAnalyticsEventForwarder.js',
+            file: 'dist/LeanplumAnalyticsEventForwarder.iife.js',
             format: 'iife',
             exports: 'named',
             name: 'mpLeanplumKit',
@@ -37,7 +37,7 @@ export default [
     {
         input: 'src/LeanplumAnalyticsEventForwarder.js',
         output: {
-            file: 'npm/LeanplumAnalyticsEventForwarder.js',
+            file: 'dist/LeanplumAnalyticsEventForwarder.common.js',
             format: 'cjs',
             exports: 'named',
             name: 'mpLeanplumKit',
