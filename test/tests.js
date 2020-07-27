@@ -1,12 +1,14 @@
 /* eslint-disable no-undef*/
 
-describe('Leanplum Forwarder', function () {
+describe('Leanplum Forwarder', function() {
     var expandCommerceEvent = function(event) {
-            return [{
-                EventName: event.EventName,
-                EventDataType: event.EventDataType,
-                EventAttributes: event.EventAttributes
-            }];
+            return [
+                {
+                    EventName: event.EventName,
+                    EventDataType: event.EventDataType,
+                    EventAttributes: event.EventAttributes,
+                },
+            ];
         },
         MessageType = {
             SessionStart: 1,
@@ -15,7 +17,7 @@ describe('Leanplum Forwarder', function () {
             PageEvent: 4,
             CrashReport: 5,
             OptOut: 6,
-            Commerce: 16
+            Commerce: 16,
         },
         EventType = {
             Unknown: 0,
@@ -29,9 +31,9 @@ describe('Leanplum Forwarder', function () {
             Other: 8,
             Media: 9,
             ProductPurchase: 16,
-            getName: function () {
+            getName: function() {
                 return 'blahblah';
-            }
+            },
         },
         CommerceEventType = {
             ProductAddToCart: 10,
@@ -46,7 +48,7 @@ describe('Leanplum Forwarder', function () {
             PromotionClick: 19,
             ProductAddToWishlist: 20,
             ProductRemoveFromWishlist: 21,
-            ProductImpression: 22
+            ProductImpression: 22,
         },
         ProductActionType = {
             Unknown: 0,
@@ -59,7 +61,7 @@ describe('Leanplum Forwarder', function () {
             Purchase: 7,
             Refund: 8,
             AddToWishlist: 9,
-            RemoveFromWishlist: 10
+            RemoveFromWishlist: 10,
         },
         IdentityType = {
             Other: 0,
@@ -72,31 +74,32 @@ describe('Leanplum Forwarder', function () {
             Email: 7,
             Alias: 8,
             FacebookCustomAudienceId: 9,
-            getName: function () {return 'CustomerID';}
+            getName: function() {
+                return 'CustomerID';
+            },
         },
         PromotionActionType = {
             Unknown: 0,
             PromotionView: 1,
-            PromotionClick: 2
+            PromotionClick: 2,
         },
-        ReportingService = function () {
+        ReportingService = function() {
             var self = this;
 
             this.id = null;
             this.event = null;
 
-            this.cb = function (forwarder, event) {
+            this.cb = function(forwarder, event) {
                 self.id = forwarder.id;
                 self.event = event;
             };
 
-            this.reset = function () {
+            this.reset = function() {
                 this.id = null;
                 this.event = null;
             };
         },
         reportService = new ReportingService(),
-
         MockLeanplum = function() {
             var self = this;
 
@@ -130,14 +133,13 @@ describe('Leanplum Forwarder', function () {
 
                 return true;
             };
-            this.track = function(name, eventProperties){
+            this.track = function(name, eventProperties) {
                 self.trackCustomEventCalled = true;
                 self.trackCustomName = name;
                 if (name === 'Purchase') {
                     self.totalAmount = eventProperties.totalAmount;
                     self.eventProperties.push(arguments[2]);
-                }
-                else {
+                } else {
                     self.eventProperties.push(eventProperties);
                 }
 
@@ -145,7 +147,7 @@ describe('Leanplum Forwarder', function () {
                 return true;
             };
 
-            this.advanceTo = function (name, eventProperties){
+            this.advanceTo = function(name, eventProperties) {
                 self.trackCustomEventCalled = true;
                 self.trackCustomName = name;
                 self.eventProperties.push(eventProperties);
@@ -160,8 +162,7 @@ describe('Leanplum Forwarder', function () {
                     for (var key in userAttributes) {
                         if (userAttributes[key] === null) {
                             delete self.userAttributes[key];
-                        }
-                        else {
+                        } else {
                             self.userAttributes[key] = userAttributes[key];
                         }
                     }
@@ -176,15 +177,14 @@ describe('Leanplum Forwarder', function () {
                 for (var key in attributeDict) {
                     if (attributeDict[key] === null) {
                         delete self.userAttributes[key];
-                    }
-                    else {
+                    } else {
                         self.userAttributes[key] = attributeDict[key];
                     }
                 }
             };
         };
 
-    before(function () {
+    before(function() {
         mParticle.EventType = EventType;
         mParticle.ProductActionType = ProductActionType;
         mParticle.PromotionType = PromotionActionType;
@@ -196,22 +196,35 @@ describe('Leanplum Forwarder', function () {
 
     beforeEach(function() {
         window.Leanplum = new MockLeanplum();
-        mParticle.forwarder.init({
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'customerId'
-        }, reportService.cb, true, null, {
-            gender: 'm'
-        }, [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }], '1.1', 'My App');
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'customerId',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
     });
 
     it('should log event', function(done) {
@@ -221,8 +234,8 @@ describe('Leanplum Forwarder', function () {
             EventAttributes: {
                 label: 'label',
                 value: 200,
-                category: 'category'
-            }
+                category: 'category',
+            },
         });
         window.Leanplum.apiKey.should.equal('123456');
         window.Leanplum.appId.should.equal('abcde');
@@ -239,8 +252,8 @@ describe('Leanplum Forwarder', function () {
             EventName: 'test name',
             EventAttributes: {
                 attr1: 'test1',
-                attr2: 'test2'
-            }
+                attr2: 'test2',
+            },
         });
 
         window.Leanplum.trackCustomEventCalled.should.equal(true);
@@ -268,16 +281,16 @@ describe('Leanplum Forwarder', function () {
                         Price: 400,
                         TotalAmount: 400,
                         CouponCode: 'coupon-code',
-                        Quantity: 1
-                    }
+                        Quantity: 1,
+                    },
                 ],
                 TransactionId: 123,
                 Affiliation: 'my-affiliation',
                 TotalAmount: 450,
                 TaxAmount: 40,
                 ShippingAmount: 10,
-                CouponCode: null
-            }
+                CouponCode: null,
+            },
         });
 
         window.Leanplum.trackCustomEventCalled.should.equal(true);
@@ -290,7 +303,9 @@ describe('Leanplum Forwarder', function () {
         window.Leanplum.eventProperties[0].Variant.should.equal('6');
         window.Leanplum.eventProperties[0].Price.should.equal(400);
         window.Leanplum.eventProperties[0].TotalAmount.should.equal(400);
-        window.Leanplum.eventProperties[0].CouponCode.should.equal('coupon-code');
+        window.Leanplum.eventProperties[0].CouponCode.should.equal(
+            'coupon-code'
+        );
         window.Leanplum.eventProperties[0].Quantity.should.equal(1);
 
         done();
@@ -304,15 +319,24 @@ describe('Leanplum Forwarder', function () {
             EventAttributes: {
                 label: 'label',
                 value: 200,
-                category: 'category'
-            }
+                category: 'category',
+            },
         });
 
         window.Leanplum.should.have.property('trackCustomEventCalled', true);
-        window.Leanplum.should.have.property('trackCustomName', 'Test Purchase Event');
-        window.Leanplum.eventProperties[0].should.have.property('label', 'label');
+        window.Leanplum.should.have.property(
+            'trackCustomName',
+            'Test Purchase Event'
+        );
+        window.Leanplum.eventProperties[0].should.have.property(
+            'label',
+            'label'
+        );
         window.Leanplum.eventProperties[0].should.have.property('value', 200);
-        window.Leanplum.eventProperties[0].should.have.property('category', 'category');
+        window.Leanplum.eventProperties[0].should.have.property(
+            'category',
+            'category'
+        );
 
         done();
     });
@@ -325,22 +349,35 @@ describe('Leanplum Forwarder', function () {
 
     it('should set user identity when userIdentities are passed on init and userIdField = email', function(done) {
         window.Leanplum = new MockLeanplum();
-        mParticle.forwarder.init({
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'email'
-        }, reportService.cb, true, null, {
-            gender: 'm'
-        }, [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }], '1.1', 'My App');
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'email',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
 
         window.Leanplum.userId.should.equal('email');
 
@@ -354,24 +391,39 @@ describe('Leanplum Forwarder', function () {
                 return {
                     getMPID: function() {
                         return '123';
-                    }};
-            }};
-        mParticle.forwarder.init({
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'mpid'
-        }, reportService.cb, true, null, {
-            gender: 'm'
-        }, [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }], '1.1', 'My App');
+                    },
+                };
+            },
+        };
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'mpid',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
 
         window.Leanplum.userId.should.equal('123');
 
@@ -380,13 +432,22 @@ describe('Leanplum Forwarder', function () {
 
     it('should set user identity when directly called and no ids are passed', function(done) {
         window.Leanplum = new MockLeanplum();
-        mParticle.forwarder.init({
-            apiKey: '123456',
-            appId: 'abcde',
-            userIdField: 'email'
-        }, reportService.cb, true, null, {
-            gender: 'm'
-        }, [], '1.1', 'My App');
+        mParticle.forwarder.init(
+            {
+                apiKey: '123456',
+                appId: 'abcde',
+                userIdField: 'email',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [],
+            '1.1',
+            'My App'
+        );
 
         mParticle.forwarder.setUserIdentity('123abc', IdentityType.Email);
 
@@ -420,29 +481,43 @@ describe('Leanplum Forwarder', function () {
 
     it('should set userId as MPID on onUserIdentified if forwarder settings has MPID as userIdField', function(done) {
         var mParticleUser = {
-            getMPID: function() {return 'abc';}
+            getMPID: function() {
+                return 'abc';
+            },
         };
-        mParticle.forwarder.init({
-            clientKey: '123456',
-            appId: 'abcde',
-            userIdField: 'mpid'
-        }, reportService.cb, true, null, {
-            gender: 'm'
-        }, [{
-            Identity: 'customerId',
-            Type: IdentityType.CustomerId
-        }, {
-            Identity: 'email',
-            Type: IdentityType.Email
-        }, {
-            Identity: 'facebook',
-            Type: IdentityType.Facebook
-        }], '1.1', 'My App');
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'mpid',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
 
         mParticle.forwarder.onUserIdentified(mParticleUser);
 
         window.Leanplum.userId.should.equal('abc');
-
 
         done();
     });
