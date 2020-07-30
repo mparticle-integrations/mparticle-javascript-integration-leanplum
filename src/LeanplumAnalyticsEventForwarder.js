@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-window.Leanplum = require('leanplum-sdk');
 
 //
 //  Copyright 2017 mParticle, Inc.
@@ -196,16 +195,29 @@ window.Leanplum = require('leanplum-sdk');
             isTesting = testMode;
 
             try {
-                completeLeanPlumInitialization(userAttributes, userIdentities);
-                isInitialized = true;
+                if (!isTesting) {
+                    var leanplumScript = document.createElement('script');
+                    leanplumScript.type = 'text/javascript';
+                    leanplumScript.async = true;
+                    leanplumScript.src = 'https://cdn.jsdelivr.net/npm/leanplum-sdk@1';
 
-                if (eventQueue.length > 0) {
-                    // Process any events that may have been queued up while forwarder was being initialized.
-                    for (var i = 0; i < eventQueue.length; i++) {
-                        processEvent(eventQueue[i]);
-                    }
+                    leanplumScript.onload = function() {
+                        completeLeanPlumInitialization(userAttributes, userIdentities);
+                        isInitialized = true;
+                        if (Leanplum && eventQueue.length > 0) {
+                            // Process any events that may have been queued up while forwarder was being initialized.
+                            for (var i = 0; i < eventQueue.length; i++) {
+                                processEvent(eventQueue[i]);
+                            }
 
-                    eventQueue = [];
+                            eventQueue = [];
+                        }
+                    };
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
+                }
+                else {
+                    completeLeanPlumInitialization(userAttributes, userIdentities);
+                    isInitialized = true;
                 }
 
                 return 'Leanplum successfully loaded';

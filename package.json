@@ -31,8 +31,7 @@
     },
     "dependencies": {
         "isobject": "^4.0.0",
-        "@mparticle/web-sdk": "^2.11.1",
-        "leanplum-sdk": "^1.7.0"
+        "@mparticle/web-sdk": "^2.11.1"
     },
     "license": "Apache-2.0"
 }
