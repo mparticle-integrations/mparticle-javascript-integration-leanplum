@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+window.Leanplum = require('leanplum-sdk');
 
 //
 //  Copyright 2017 mParticle, Inc.
@@ -195,29 +196,16 @@
             isTesting = testMode;
 
             try {
-                if (!isTesting) {
-                    var leanplumScript = document.createElement('script');
-                    leanplumScript.type = 'text/javascript';
-                    leanplumScript.async = true;
-                    leanplumScript.src = 'https://www.leanplum.com/static/leanplum.js';
+                completeLeanPlumInitialization(userAttributes, userIdentities);
+                isInitialized = true;
 
-                    leanplumScript.onload = function() {
-                        completeLeanPlumInitialization(userAttributes, userIdentities);
-                        isInitialized = true;
-                        if (Leanplum && eventQueue.length > 0) {
-                            // Process any events that may have been queued up while forwarder was being initialized.
-                            for (var i = 0; i < eventQueue.length; i++) {
-                                processEvent(eventQueue[i]);
-                            }
+                if (eventQueue.length > 0) {
+                    // Process any events that may have been queued up while forwarder was being initialized.
+                    for (var i = 0; i < eventQueue.length; i++) {
+                        processEvent(eventQueue[i]);
+                    }
 
-                            eventQueue = [];
-                        }
-                    };
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(leanplumScript);
-                }
-                else {
-                    completeLeanPlumInitialization(userAttributes, userIdentities);
-                    isInitialized = true;
+                    eventQueue = [];
                 }
 
                 return 'Leanplum successfully loaded';
