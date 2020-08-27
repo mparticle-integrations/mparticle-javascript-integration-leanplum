@@ -236,7 +236,7 @@
             var TWO_HOURS = 2*60*60;
             Leanplum.useSessionLength(forwarderSettings.sessionLength || TWO_HOURS);
 
-            if (forwarderSettings.enableRichInAppMessages) {
+            if (forwarderSettings.enableRichInAppMessages === 'True') {
                 Leanplum.enableRichInAppMessages(true);
             }
 
