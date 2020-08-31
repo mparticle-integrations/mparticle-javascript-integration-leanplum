@@ -233,6 +233,13 @@
         }
 
         function setLeanPlumEnvironment() {
+            var TWO_HOURS = 2*60*60;
+            Leanplum.useSessionLength(forwarderSettings.sessionLength || TWO_HOURS);
+
+            if (forwarderSettings.enableRichInAppMessages === 'True') {
+                Leanplum.enableRichInAppMessages(true);
+            }
+
             if (window.mParticle.isSandbox) {
                 Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
             }
