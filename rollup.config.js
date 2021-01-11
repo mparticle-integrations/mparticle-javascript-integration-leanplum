@@ -5,22 +5,6 @@ export default [
     {
         input: 'src/LeanplumAnalyticsEventForwarder.js',
         output: {
-            file: 'LeanplumAnalyticsEventForwarder.js',
-            format: 'iife',
-            exports: 'named',
-            name: 'mpLeanplumKit',
-            strict: false
-        },
-        plugins: [
-            resolve({
-                browser: true
-            }),
-            commonjs()
-        ]
-    },
-    {
-        input: 'src/LeanplumAnalyticsEventForwarder.js',
-        output: {
             file: 'dist/LeanplumAnalyticsEventForwarder.iife.js',
             format: 'iife',
             exports: 'named',
