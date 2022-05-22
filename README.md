@@ -1,6 +1,6 @@
 # Leanplum Javascript Integration
 
-This repository contains the [Leanplum](www.leanplum.com) integration for the mParticle Javascript SDK.
+This repository contains the [Leanplum](https://docs.mparticle.com/integrations/leanplum/event/) integration for the mParticle Javascript SDK.
 
 #License
 
