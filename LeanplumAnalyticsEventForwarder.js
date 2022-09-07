@@ -245,7 +245,7 @@ var mpLeanplumKit = (function (exports) {
           }
 
           function setLeanPlumEnvironment() {
-              if (window.mParticle.isSandbox) {
+              if (forwarderSettings.clientKey.startsWith('dev_')) {
                   Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
               }
               else {

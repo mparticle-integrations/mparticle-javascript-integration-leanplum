@@ -240,7 +240,7 @@
                 Leanplum.enableRichInAppMessages(true);
             }
 
-            if (window.mParticle.isSandbox) {
+            if (forwarderSettings.clientKey.startsWith('dev_')) {
                 Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
             }
             else {
