@@ -480,7 +480,7 @@ describe('Leanplum Forwarder', function() {
         done();
     });
 
-    it('should call setAppIdForProductionMode upon init', function (done) {
+    it('should call setAppIdForProductionMode if mParticle is in production mode upon init', function (done) {
         mParticle.getEnvironment = function () {
             return 'production';
         };
