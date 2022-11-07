@@ -439,7 +439,7 @@ describe('Leanplum Forwarder', function() {
         done();
     });
 
-    it('should call setAppIdForDevelopmentMode upon init', function (done) {
+    it('should call setAppIdForDevelopmentMode if mParticle is in development mode upon init', function (done) {
         mParticle.getEnvironment = function () {
             return 'development';
         };
