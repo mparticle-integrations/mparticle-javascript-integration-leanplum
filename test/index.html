@@ -9,7 +9,7 @@
 
         <script src="../node_modules/mocha/mocha.js"></script>
         <script src="../node_modules/should/should.js"></script>
-        <script src="mockhttprequest.js"></script>
+        <script src="./lib/mockhttprequest.js"></script>
         <script>
             var mp = function () {
                 var self = this;
@@ -50,7 +50,7 @@
             mocha.setup('bdd');
         </script>
 
-        <script src="tests.js"></script>
+        <script src="./src/tests.js"></script>
         <script>
             mocha.run();
         </script>
