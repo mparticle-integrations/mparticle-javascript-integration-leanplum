@@ -201,6 +201,16 @@ describe('Leanplum Forwarder', function() {
         mParticle.CommerceEventType = CommerceEventType;
         mParticle.eCommerce = {};
         mParticle.eCommerce.expandCommerceEvent = expandCommerceEvent;
+
+        mParticle.Types = {} || mParticle.Types;
+        mParticle.Types.Environment = {
+            Production: 'production',
+            Development: 'development',
+        };
+
+        mParticle.getEnvironment = function () {
+            return 'development';
+        };
     });
 
     beforeEach(function() {
