@@ -1,11 +1,11 @@
 const { DEBUG } = process.env || 'false';
 
 const files = [
-    '../../node_modules/@mparticle/web-sdk/dist/mparticle.js',
+    '../node_modules/@mparticle/web-sdk/dist/mparticle.js',
     'config.js',
-    '../../dist/LeanplumAnalyticsEventForwarder.iife.js',
-    'mockhttprequest.js',
-    '../test-bundle.js',
+    '../dist/LeanplumAnalyticsEventForwarder.iife.js',
+    'lib/mockhttprequest.js',
+    'test-bundle.js',
 ];
 
 let browsers = ['ChromeHeadless', 'FirefoxHeadless'];
