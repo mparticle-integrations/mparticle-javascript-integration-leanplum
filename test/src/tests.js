@@ -111,6 +111,7 @@ describe('Leanplum Forwarder', function() {
             this.logPurchaseName = null;
             this.apiKey = null;
             this.appId = null;
+            this.sessionLength = null;
             this.userId = null;
             this.userAttributes = {};
             this.userIdField = null;
@@ -181,6 +182,10 @@ describe('Leanplum Forwarder', function() {
                         self.userAttributes[key] = attributeDict[key];
                     }
                 }
+            };
+
+            this.useSessionLength = function (sessionLength) {
+                self.sessionLength = sessionLength;
             };
         };
 
