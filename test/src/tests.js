@@ -105,6 +105,8 @@ describe('Leanplum Forwarder', function() {
 
             this.trackCustomEventCalled = false;
             this.logPurchaseEventCalled = false;
+            this.setAppIdForDevelopmentModeCalled = false;
+            this.setAppIdForProductionModeCalled = false;
             this.initializeCalled = false;
 
             this.trackCustomName = null;
@@ -119,16 +121,18 @@ describe('Leanplum Forwarder', function() {
             this.eventProperties = [];
             this.purchaseEventProperties = [];
 
-            this.setAppIdForDevelopmentMode = function(appId, apiKey) {
+            this.setAppIdForDevelopmentMode = function (appId, apiKey) {
                 self.initializeCalled = true;
+                self.setAppIdForDevelopmentModeCalled = true;
                 self.apiKey = apiKey;
                 self.appId = appId;
 
                 return true;
             };
 
-            this.setAppIdForProductionMode = function(appId, apiKey) {
+            this.setAppIdForProductionMode = function (appId, apiKey) {
                 self.initializeCalled = true;
+                self.setAppIdForProductionModeCalled = true;
                 self.apiKey = apiKey;
                 self.appId = appId;
 
@@ -197,6 +201,16 @@ describe('Leanplum Forwarder', function() {
         mParticle.CommerceEventType = CommerceEventType;
         mParticle.eCommerce = {};
         mParticle.eCommerce.expandCommerceEvent = expandCommerceEvent;
+
+        mParticle.Types = {} || mParticle.Types;
+        mParticle.Types.Environment = {
+            Production: 'production',
+            Development: 'development',
+        };
+
+        mParticle.getEnvironment = function () {
+            return 'development';
+        };
     });
 
     beforeEach(function() {
@@ -435,7 +449,90 @@ describe('Leanplum Forwarder', function() {
         done();
     });
 
-    it('should set user identity when directly called and no ids are passed', function(done) {
+    it('should call setAppIdForDevelopmentMode if mParticle is in development mode upon init', function (done) {
+        mParticle.getEnvironment = function () {
+            return 'development';
+        };
+
+        window.Leanplum = new MockLeanplum();
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'email',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
+
+        window.Leanplum.setAppIdForDevelopmentModeCalled.should.equal(true);
+
+        done();
+    });
+
+    it('should call setAppIdForProductionMode if mParticle is in production mode upon init', function (done) {
+        mParticle.getEnvironment = function () {
+            return 'production';
+        };
+
+        window.Leanplum = new MockLeanplum();
+
+        mParticle.forwarder.init(
+            {
+                clientKey: '123456',
+                appId: 'abcde',
+                userIdField: 'email',
+            },
+            reportService.cb,
+            true,
+            null,
+            {
+                gender: 'm',
+            },
+            [
+                {
+                    Identity: 'customerId',
+                    Type: IdentityType.CustomerId,
+                },
+                {
+                    Identity: 'email',
+                    Type: IdentityType.Email,
+                },
+                {
+                    Identity: 'facebook',
+                    Type: IdentityType.Facebook,
+                },
+            ],
+            '1.1',
+            'My App'
+        );
+
+        window.Leanplum.setAppIdForProductionModeCalled.should.equal(true);
+
+        done();
+    });
+
+    it('should set user identity when directly called and no ids are passed', function (done) {
         window.Leanplum = new MockLeanplum();
         mParticle.forwarder.init(
             {
