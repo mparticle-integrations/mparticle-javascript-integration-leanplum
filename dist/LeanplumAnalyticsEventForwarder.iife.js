@@ -252,10 +252,9 @@ var mpLeanplumKit = (function (exports) {
                   Leanplum.enableRichInAppMessages(true);
               }
 
-              if (window.mParticle.isSandbox) {
+              if (window.mParticle.getEnvironment() === window.mParticle.Types.Environment.Development) {
                   Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
-              }
-              else {
+              } else {
                   Leanplum.setAppIdForProductionMode(forwarderSettings.appId, forwarderSettings.clientKey);
               }
           }
@@ -336,12 +335,14 @@ var mpLeanplumKit = (function (exports) {
           window.console.log('Successfully registered ' + name + ' to your mParticle configuration');
       }
 
-      if (window && window.mParticle && window.mParticle.addForwarder) {
-          window.mParticle.addForwarder({
-              name: name,
-              constructor: constructor,
-              getId: getId
-          });
+      if (typeof window !== 'undefined') {
+          if (window && window.mParticle && window.mParticle.addForwarder) {
+              window.mParticle.addForwarder({
+                  name: name,
+                  constructor: constructor,
+                  getId: getId
+              });
+          }
       }
 
       var LeanplumAnalyticsEventForwarder = {
