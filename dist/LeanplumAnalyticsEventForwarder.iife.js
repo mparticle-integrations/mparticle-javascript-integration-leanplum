@@ -39,6 +39,10 @@ var mpLeanplumKit = (function (exports) {
               CrashReport: 5,
               OptOut: 6,
               Commerce: 16
+          },
+          Environment = {
+              Production: 'production',
+              Development: 'development',
           };
 
       var constructor = function () {
@@ -252,7 +256,7 @@ var mpLeanplumKit = (function (exports) {
                   Leanplum.enableRichInAppMessages(true);
               }
 
-              if (window.mParticle.getEnvironment() === window.mParticle.Types.Environment.Development) {
+              if (window.mParticle.getEnvironment() === Environment.Development) {
                   Leanplum.setAppIdForDevelopmentMode(forwarderSettings.appId, forwarderSettings.clientKey);
               } else {
                   Leanplum.setAppIdForProductionMode(forwarderSettings.appId, forwarderSettings.clientKey);
