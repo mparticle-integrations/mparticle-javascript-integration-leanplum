@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/mparticle-integrations/mparticle-javascript-integration-leanplum/compare/v2.0.4...v2.0.5) (2022-11-22)
+
+
+### Bug Fixes
+
+* Replace missing environment types api ([#50](https://github.com/mparticle-integrations/mparticle-javascript-integration-leanplum/issues/50)) ([4329813](https://github.com/mparticle-integrations/mparticle-javascript-integration-leanplum/commit/4329813ce7f7b3485a374d63d0537158a0748874))
+
 ## [2.0.4](https://github.com/mparticle-integrations/mparticle-javascript-integration-leanplum/compare/v2.0.3...v2.0.4) (2022-11-09)
 
 
